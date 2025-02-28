@@ -1,77 +1,109 @@
-# chat
+Chat API - User & Message Service
+Overview
+This REST API, built using Quarkus, provides functionalities for user management and messaging. 
+It supports user authentication, messaging, event streaming, and role-based access control (RBAC) using JWT tokens.
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Technologies Used
+Java 21+
+Quarkus
+PostgreSQL (for message storage)
+Kafka (for event streaming)
+Jakarta RESTful Web Services (JAX-RS)
+JWT Authentication
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+📌 User Service
+Base URL: /api/v1/users
+Endpoints
 
-## Running the application in dev mode
+1️⃣ User Registration (Public)
+POST /api/v1/users/register
+Description: Creates a new user.
+Request Body:
+{
+  "name": "John",
+  "surname": "Doe",
+  "email": "john@example.com",
+  "password": "securepassword"
+}
 
-You can run your application in dev mode that enables live coding using:
+Response:
+{
+  "id": "62062702-e651-4aef-8788-584b1e13f338",
+  "name": "John",
+  "surname": "Doe",
+  "email": "john@example.com",
+  "role": "USER"
+}
 
-```shell script
-./mvnw quarkus:dev
-```
+2️⃣ Get All Users (Admin Only)
+GET /api/v1/users
+Description: Fetches all users (Admin access required).
+Response: List of users.
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+3️⃣ Get User by ID
+GET /api/v1/users/{id}
+Description: Fetches a user by ID (User/Admin access required).
 
-## Packaging and running the application
+4️⃣ Update User
+PUT /api/v1/users/{id}
+Description: Updates user details (User/Admin access required).
+Request Body: Same as the registration body.
 
-The application can be packaged using:
+5️⃣ Delete User (Admin Only)
+DELETE /api/v1/users/{id}
+Description: Deletes a user (Admin access required).
 
-```shell script
-./mvnw package
-```
+6️⃣ Verify User Email (Public)
+POST /api/v1/users/verify?email={email}&code={code}
+Description: Verifies a user's email.
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+📌 Message Service
+Base URL: /api/v1/messages
+Endpoints
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+1️⃣ Send Message
+POST /api/v1/messages
+Description: Sends a message to another user.
+Request Body:
+{
+  "sender": "uuid",
+  "recipient": "uuid",
+  "content": "Hello!"
+}
 
-If you want to build an _über-jar_, execute the following command:
+Response:
+{
+  "id": "uuid",
+  "sender": "uuid",
+  "recipient": "uuid",
+  "content": "Hello!",
+  "timestamp": "2025-02-28T12:34:56Z"
+}
 
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
-```
+2️⃣ Get User Messages
+GET /api/v1/messages/{userId}
+Description: Fetches all messages for a user.
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+📌 Authentication & Authorization
 
-## Creating a native executable
+Uses JWT-based authentication.
+Roles: USER, ADMIN.
+Secure endpoints require a valid JWT token in the Authorization header:
+Authorization: Bearer <JWT_TOKEN>
 
-You can create a native executable using:
+📌 How to Run
 
-```shell script
-./mvnw package -Dnative
-```
+Clone the repository:
+GitHub - Polixis Chat API
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+Run the Quarkus application:
+mvn quarkus:dev
 
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
+📌 Notes
+Thank you so much for the time you dedicated to me.
+It was very interesting for me to work on this application.
+I learned about the Quarkus framework for the first time.
+Please don't judge me too harshly.
+With respect and love,
+Movses Harutyunyan.
 
-You can then execute your native executable with: `./target/chat-1.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
-
-## Related Guides
-
-- Hibernate ORM ([guide](https://quarkus.io/guides/hibernate-orm)): Define your persistent model with Hibernate ORM and
-  Jakarta Persistence
-- SmallRye JWT ([guide](https://quarkus.io/guides/security-jwt)): Secure your applications with JSON Web Token
-- Apache Kafka Streams ([guide](https://quarkus.io/guides/kafka-streams)): Implement stream processing applications
-  based on Apache Kafka
-- JDBC Driver - PostgreSQL ([guide](https://quarkus.io/guides/datasource)): Connect to the PostgreSQL database via JDBC
-
-## Provided Code
-
-### Hibernate ORM
-
-Create your first JPA entity
-
-[Related guide section...](https://quarkus.io/guides/hibernate-orm)
-
-### RESTEasy JAX-RS
-
-Easily start your RESTful Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started#the-jax-rs-resources)
